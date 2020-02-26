@@ -7,7 +7,7 @@ fs.readFile('./index.html', function (err, html) {
     }
     http.createServer(function(request, response) {  
         response.writeHeader(200, {"Content-Type": "text/html"});  
-        response.write(html);  
+        response.write(html);
         response.end();  
     }).listen(8014,'10.199.14.46',() => {
         console.log(`Server running at locahost`)})
