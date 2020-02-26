@@ -31,7 +31,7 @@ app.get('/', function (req, res) {
   // return "Implementasi API get di Sql server, request map api di '10.199.14.46:8014/api/datasiswa'"
 });
 
-var server = app.listen(8014, 'localhost', function () {
+var server = app.listen(8014, '10.199.14.46', function () {
 });
 // server.listen(8014, '10.199.14.46', () => {
 // });
