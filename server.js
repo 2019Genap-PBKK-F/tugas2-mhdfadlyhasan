@@ -1,7 +1,7 @@
 var http = require("http");
 var fs = require('fs');
 
-fs.readFile('/home/ridho/tugas2/05111740000078/index.html', function (err, html) {
+fs.readFile('./home/ridho/tugas2/05111740000078/index.html', function (err, html) {
     if (err) {
         throw err; 
     }
