@@ -1,9 +1,9 @@
 var express = require('express');
 var cors = require('cors')
-app.use(cors())
 var app = express()
 var bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cors())
 app.use(bodyParser.json());
 
 var sql = require("mssql");
@@ -14,6 +14,7 @@ var sql = require("mssql");
         server: '10.199.13.253', 
         database: 'nrp05111740000078'
     };
+ console.log('perbaiki')
 app.get('/datasiswa/', function (req, res) {
     sql.connect(config, function (err) {
         if (err) console.log(err);
