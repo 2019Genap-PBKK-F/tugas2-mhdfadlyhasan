@@ -7,7 +7,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 var sql = require("mssql");
-var key = 0;
     // config for your database
     var config = {
         user: 'su',
