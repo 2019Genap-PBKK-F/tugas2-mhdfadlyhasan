@@ -12,7 +12,7 @@ var sql = require("mssql");
         user: 'su',
         password: 'SaSa1212',
         server: '10.199.13.253', 
-        database: 'nrp05111740000078' 
+        database: 'nrp05111740000078'
     };
 app.get('/datasiswa/', function (req, res) {
     sql.connect(config, function (err) {
@@ -80,7 +80,7 @@ app.post('/insertdata/', function (req, res) {
         });
     });
   });
-var server = app.listen(8014, '10.199.14.46', function () {
+var server = app.listen(8014, function () {
 });
 // server.listen(8014, '10.199.14.46', () => {
 // });
