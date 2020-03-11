@@ -80,7 +80,7 @@ app.post('/insertdata/', function (req, res) {
         });
     });
   });
-var server = app.listen(8014, 'localhost', function () {
+var server = app.listen(8014, '10.199.14.46', function () {
 });
 // server.listen(8014, '10.199.14.46', () => {
 // });
