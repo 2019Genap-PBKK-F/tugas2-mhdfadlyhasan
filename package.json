@@ -1,45 +1,27 @@
 {
-  "name": "tugas-2",
-  "version": "0.1.0",
-  "private": false,
-  "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
-  },
+  "name": "tugas2",
+  "version": "1.0.0",
+  "description": "tugas",
+  "main": "server.js",
   "dependencies": {
-    "core-js": "^3.6.4",
+    "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "mssql": "^6.1.0",
-    "mysql": "^2.18.1",
-    "vue": "^2.6.11"
+    "mssql": "^6.1.0"
   },
-  "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.2.0",
-    "@vue/cli-plugin-eslint": "~4.2.0",
-    "@vue/cli-service": "~4.2.0",
-    "babel-eslint": "^10.0.3",
-    "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^6.1.2",
-    "vue-template-compiler": "^2.6.11"
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/essential",
-      "eslint:recommended"
-    ],
-    "parserOptions": {
-      "parser": "babel-eslint"
-    },
-    "rules": {}
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/2019Genap-PBKK-F/tugas2-mhdfadlyhasan.git"
   },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions"
-  ]
+  "author": "fadly",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/2019Genap-PBKK-F/tugas2-mhdfadlyhasan/issues"
+  },
+  "homepage": "https://github.com/2019Genap-PBKK-F/tugas2-mhdfadlyhasan#readme"
 }
