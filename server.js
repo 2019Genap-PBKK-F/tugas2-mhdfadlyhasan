@@ -9,7 +9,7 @@ app.use(bodyParser.json());
 var sql = require("mssql");
     // config for your database
 var config = {
-    user: 'sa',
+    user: 'su',
     password: 'SaSa1212',
     server: '10.199.13.253', 
     database: 'nrp05111740000078'
