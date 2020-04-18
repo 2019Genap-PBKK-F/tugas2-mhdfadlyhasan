@@ -15,51 +15,754 @@ var config = {
     database: 'nrp05111740000078'
 };
 
-
-app.post('/insertdatadasar/', function (req, res) {
+app.post('/insertsatuankerja/', function (req, res) {
     sql.connect(config, function (err) {
         if (err) console.log(err);
         var request = new sql.Request();
-        // query to the database and get the records
-        request.query("Insert Into Data_Dasar values ('"+req.body.NAMA+ "')", function (err, recordset) {
+        request.input('id',sql.UniqueIdentifier,req.body.id )
+        request.input('id_jns_satker',sql.Int,req.body.id_jns_satker)
+        request.input('id_induk_satker',sql.UniqueIdentifier,req.body.id_induk_satker  )
+        request.input('nama',sql.VarChar,req.body.nama)
+        request.input('email',sql.VarChar,req.body.email)
+        request.input('expired_date',sql.DateTime,req.body.expired_date)
+        //request.input('last_update',sql.VarChar,req.body.bobot )
+
+        request.query("Insert Into satuankerja values " +
+         "(NEWID() ,@id_jns_satker,@id_induk_satker,@nama,@email,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,@expired_date)", function (err, recordset) {
             if (err) console.log(err)
-            else console.log("berhasil post dengan id " + req.body.NAMA)
-            res.send('berhasil mengirim data dasar');
+            else 
+            {
+                console.log("berhasil post dengan id " + req.body.id_periode)
+                res.send('berhasil mengirim data dasar');
+            }
         });
     });
   });
-  app.get('/datadasar/', function (req, res) {
+
+
+  app.get('/satuankerja/', function (req, res) {
+    
     sql.connect(config, function (err) {
         if (err) console.log(err);
         var request = new sql.Request();
         // query to the database and get the records
-        request.query('select id,NAMA as name from Data_Dasar', function (err, recordset) {
+        request.query('select id,id_jns_satker,id_induk_satker, nama as name,email,create_date ,last_update ,expired_date from satuankerja', function (err, recordset) {
+            if (err) console.log(err)
+            else 
+            {
+                console.log("berhasil")
+                res.send(recordset.recordset);      
+            }
+        });
+    });
+});
+
+
+
+app.put('/editsatuankerja/', function (req, res) {   
+    var request = new sql.Request();
+    
+    request.input('id',sql.UniqueIdentifier,req.body.id )
+    request.input('id_jns_satker',sql.Int,req.body.id_jns_satker)
+    request.input('id_induk_satker',sql.UniqueIdentifier,req.body.id_induk_satker  )
+    request.input('nama',sql.VarChar,req.body.nama)
+    request.input('email',sql.VarChar,req.body.email)
+    request.input('expired_date',sql.DateTime,req.body.expired_date)
+
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        request.query("UPDATE satuankerja set " +
+        " [id_jns_satker] = @id_jns_satker, "  + 
+        " [id_induk_satker] = @id_induk_satker, "  + 
+        " [nama] = @nama, "  + 
+        " [email] = @email,  "  +
+        " [expired_date] = @expired_date"  +
+        " where satuankerja.id = @id"
+        , function (err, recordset) {
+            if (err) console.log(err)
+            console.log("berhasil diedit")
+            res.send('Berhasil ');
+        });
+    });
+  });
+
+  app.delete('/deletesatuankerja/:id/', function (req, res) {
+    var request = new sql.Request();
+    const id = req.params.id;
+    var querys = "Delete From satuankerja where " +
+    "satuankerja.id = '"+ id+"'"
+    console.log(querys);
+    sql.connect(config, function (err) {
+        request.query( querys, function (err, recordset) {
+        if (err) console.log(err)
+        else
+        {
+            console.log("berhasil Delete dengan id ")
+            res.send('Berhasil');
+        }});
+    });
+    
+  });
+
+
+
+
+app.post('/insertcapaianunit/', function (req, res) {
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        var request = new sql.Request();
+        request.input('id_satker',sql.UniqueIdentifier,req.body.id_satker )
+        request.input('id_datadasar',sql.Int,req.body.id_datadasar)
+        request.input('waktu',sql.DateTime,req.body.waktu )
+        request.input('capaian',sql.Float,req.body.capaian )
+
+        // query to the database and get the records
+        request.query("Insert Into Capaian_Unit values (@id_satker,@id_datadasar,@waktu,@capaian)",
+        function (err, recordset) {
+            if (err) console.log(err)
+            else res.send('berhasil mengirim data dasar');
+        });
+    });
+  });
+  app.get('/capaianunit/', function (req, res) {
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        var request = new sql.Request();
+        // query to the database and get the records
+        request.query('select id_satker,id_datadasar,waktu,capaian from Capaian_Unit', function (err, recordset) {
             if (err) console.log(err)
             console.log("berhasil")
             res.send(recordset.recordset);      
         });
     });
 });
-app.put('/editdatadasar/', function (req, res) {
+app.put('/editcapaianunit/', function (req, res) {
+    var request = new sql.Request();
+    request.input('id_satker',sql.UniqueIdentifier,req.body.id_satker )
+    request.input('id_datadasar',sql.Int,req.body.id_datadasar)
+    request.input('waktu',sql.DateTime,req.body.waktu )
+    request.input('capaian',sql.Float,req.body.capaian )
+
     sql.connect(config, function (err) {
         if (err) console.log(err);
-        var request = new sql.Request();
-        request.query("UPDATE Data_Dasar set [NAMA] = '"+req.body.NAMA+"'where Data_Dasar.id ="+ req.body.id , function (err, recordset) {
+        request.query("UPDATE Capaian_Unit set " +
+        " [capaian] = @capaian, "  + 
+        " [waktu] = @waktu  "  +
+        " where Capaian_Unit.id_datadasar = @id_datadasar  AND " +
+        " Capaian_Unit.id_satker = @id_satker"
+        , function (err, recordset) {
             if (err) console.log(err)
-            console.log("berhasil diedit data dasar")
-            res.send('Berhasil ');
+            else res.send('Berhasil ');
         });
     });
   });
+
+  app.delete('/deletecapaianunit/:id_satker/:id_datadasar', function (req, res) {
+    var request = new sql.Request();
+    const id_satker  = req.params.id_satker;
+    const id_datadasar  = req.params.id_datadasar ;
+    var querys = "Delete From Capaian_Unit where " +  
+    "Capaian_Unit.id_datadasar = "+ id_datadasar +" AND " +
+    "Capaian_Unit.id_satker = '"+ id_satker+"'"
+    sql.connect(config, function (err) {
+         request.query(querys, function (err, recordset) {
+        if (err) console.log(err)
+        else res.send('Berhasil');
+    });
+    });
+
+   
+  });
+
+
+
+  
+app.post('/insertdatadasar/', function (req, res) {
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        var request = new sql.Request();
+        request.input('nama',sql.VarChar,req.body.nama)
+        request.input('expired_date',sql.DateTime,req.body.expired_date)
+        request.query("Insert Into Data_Dasar values (@nama, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,@expired_date)", function (err, recordset) {
+            if (err) console.log(err)
+            else 
+            {
+                console.log("berhasil post dengan id " + req.body.nama)
+                res.send('berhasil mengirim data dasar');
+            }
+        });
+    });
+  });
+  
+  app.get('/datadasar/', function (req, res) {
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        var request = new sql.Request();
+        // query to the database and get the records
+        request.query('select id, nama as name, create_date,last_update,expired_date from Data_Dasar', function (err, recordset) {
+            if (err) console.log(err)
+            console.log("berhasil")
+            res.send(recordset.recordset);      
+        });
+    });
+});
+
+app.put('/editdatadasar/', function (req, res) {
+    var request = new sql.Request();
+    request.input('id',sql.Int,req.body.id )
+    request.input('nama',sql.VarChar,req.body.nama )
+    request.input('expired_date',sql.DateTime,req.body.expired_date )
+
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        request.query("UPDATE Data_Dasar set " +
+        " [nama] = @nama , "  + 
+        " [expired_date] = @expired_date, "  + 
+        " [last_update] = CURRENT_TIMESTAMP  "  +
+        " where Data_Dasar.id = @id  "
+        , function (err, recordset) {
+            if (err) console.log(err)
+            console.log("berhasil diedit" + req.body.id)
+            res.send('Berhasil ');
+        });
+    });
+});
+
   app.delete('/deletedatadasar/:idDelete', function (req, res) {
     var request = new sql.Request();
     const id = req.params.idDelete;
+    sql.connect(config, function (err) {
+        
     request.query("Delete From Data_Dasar where Data_Dasar.id = '"+ id +"'", function (err, recordset) {
         if (err) console.log(err)
         console.log("berhasil Delete dengan id " + id)
         res.send('Berhasil');
     });
+    });
   });
+
+
+
+
+
+
+
+
+
+
+
+
+app.post('/insertjenis_satker/', function (req, res) {
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        var request = new sql.Request();
+        request.input('nama',sql.VarChar,req.body.nama )
+        request.input('expired_date',sql.DateTime,req.body.expired_date )
+        //request.input('last_update',sql.VarChar,req.body.bobot )
+
+        request.query("Insert Into jenis_satker values " +
+         "(@nama,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,@expired_date )", function (err, recordset) {
+            if (err) console.log(err)
+            else 
+            {
+                console.log("berhasil post dengan id " + req.body.id_periode)
+                res.send('berhasil mengirim data dasar');
+            }
+        });
+    });
+  });
+
+  app.get('/jenis_satker/', function (req, res) {
+    
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        var request = new sql.Request();
+        // query to the database and get the records
+        request.query('select id,nama as name,create_date ,last_update ,expired_date from jenis_satker', function (err, recordset) {
+            if (err) console.log(err)
+            else 
+            {
+                console.log("berhasil")
+                res.send(recordset.recordset);      
+            }
+        });
+    });
+});
+
+
+app.put('/editjenis_satker/', function (req, res) {   
+    var request = new sql.Request();
+    request.input('id',sql.Int,req.body.id )
+    request.input('nama',sql.VarChar,req.body.nama )
+    request.input('expired_date',sql.DateTime,req.body.expired_date )
+    console.log(req.body.expired_date )
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        request.query("UPDATE jenis_satker set " +
+        " [nama] = @nama , "  + 
+        " [expired_date] = @expired_date, "  + 
+        " [last_update] = CURRENT_TIMESTAMP  "  +
+        " where jenis_satker.id = @id  "
+        , function (err, recordset) {
+            if (err) console.log(err)
+            console.log("berhasil diedit " + req.body.id)
+            res.send('Berhasil ');
+        });
+    });
+  });
+
+  app.delete('/deletejenis_satker/:id', function (req, res) {
+    var request = new sql.Request();
+    const id = req.params.id;
+    var querys = "Delete From jenis_satker where " +  
+    "jenis_satker.id  = "+ id
+    console.log(querys);
+    sql.connect(config, function (err) {
+        
+    request.query( querys, function (err, recordset) {
+        if (err) console.log(err)
+        else
+        {
+            console.log("berhasil Delete dengan id " + id)
+            res.send('Berhasil');
+        }
+    });
+    });
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.post('/insertindikator_satuankerja_log/', function (req, res) {
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        var request = new sql.Request();
+        request.input('id_periode',sql.Int,req.body.id_periode )
+        request.input('id_master',sql.Int,req.body.id_master )
+        request.input('id_satker',sql.UniqueIdentifier,req.body.id_satker )
+        request.input('capaian',sql.Float,req.body.capaian)
+        //request.input('last_update',sql.VarChar,req.body.bobot )
+
+        request.query("Insert Into Indikator_SatuanKerja_Log values " +
+         "(@id_satker,@id_periode,@id_master,@capaian, CURRENT_TIMESTAMP)", function (err, recordset) {
+            if (err) console.log(err)
+            else 
+            {
+                console.log("berhasil post dengan id " + req.body.id_periode)
+                res.send('berhasil mengirim data dasar');
+            }
+        });
+    });
+  });
+
+  app.get('/indikator_satuankerja_log/', function (req, res) {
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        var request = new sql.Request();
+        // query to the database and get the records
+        request.query('select id_periode,id_master,id_satker,capaian,create_date from indikator_satuankerja_log', function (err, recordset) {
+            if (err) console.log(err)
+            else 
+            {
+                console.log("berhasil")
+                res.send(recordset.recordset);      
+            }
+        });
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.post('/insertindikator_satuankerja/', function (req, res) {
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        var request = new sql.Request();
+        request.input('id_periode',sql.Numeric,req.body.id_periode )
+        request.input('id_master',sql.Int,req.body.id_master )
+        request.input('id_satker',sql.UniqueIdentifier,req.body.id_satker )
+        request.input('bobot',sql.Float,req.body.bobot)
+        request.input('target',sql.Float,req.body.target)
+        request.input('capaian',sql.Float,req.body.capaian)
+        //request.input('last_update',sql.VarChar,req.body.bobot )
+
+        request.query("Insert Into indikator_satuankerja values " +
+         "(@id_periode,@id_master,@id_satker,@bobot,@target,@capaian,CURRENT_TIMESTAMP)", function (err, recordset) {
+            if (err) console.log(err)
+            else 
+            {
+                console.log("berhasil post dengan id " + req.body.id_periode)
+                res.send('berhasil mengirim data dasar');
+            }
+        });
+    });
+  });
+
+
+  app.get('/indikator_satuankerja/', function (req, res) {
+    
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        var request = new sql.Request();
+        // query to the database and get the records
+        request.query('select id_periode,id_master,id_satker,bobot,target,capaian,last_update from indikator_satuankerja', function (err, recordset) {
+            if (err) console.log(err)
+            else 
+            {
+                console.log("berhasil")
+                res.send(recordset.recordset);      
+            }
+        });
+    });
+});
+
+
+
+app.put('/editindikator_satuankerja/', function (req, res) {   
+    var request = new sql.Request();
+    request.input('id_periode',sql.Numeric,req.body.id_periode )
+    request.input('id_master',sql.Int,req.body.id_master )
+    request.input('id_satker',sql.UniqueIdentifier,req.body.id_satker )
+    request.input('bobot',sql.Float,req.body.bobot)
+    request.input('target',sql.Float,req.body.target)
+    request.input('capaian',sql.Float,req.body.capaian  )
+
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        request.query("UPDATE indikator_satuankerja set " +
+        " [bobot] = @bobot, "  + 
+        " [target] = @target, "  + 
+        " [capaian] = @capaian, "  + 
+        " [last_update] = CURRENT_TIMESTAMP  "  +
+        " where indikator_satuankerja.id_periode= @id_periode  " + 
+        " AND indikator_satuankerja.id_master = @id_master " +
+        " AND indikator_satuankerja.id_satker = @id_satker " 
+        , function (err, recordset) {
+            if (err) console.log(err)
+            console.log("berhasil diedit")
+            res.send('Berhasil ');
+        });
+    });
+  });
+
+  app.delete('/deleteindikator_satuankerja/:id/:id2/:id3', function (req, res) {
+    var request = new sql.Request();
+    const idperiode = req.params.id;
+    const idmaster = req.params.id2;
+    const idsatker = req.params.id3;
+    var querys = "Delete From indikator_satuankerja where " +  
+    "indikator_satuankerja.id_periode  = "+ idperiode+" AND " +
+    "indikator_satuankerja.id_master  = "+ idmaster+" AND " +
+    "indikator_satuankerja.id_satker LIKE '"+ idsatker+"%'"
+    console.log(querys);
+    sql.connect(config, function (err) {
+        
+    request.query( querys, function (err, recordset) {
+        if (err) console.log(err)
+        else
+        {
+            console.log("berhasil Delete dengan id ")
+            res.send('Berhasil');
+        }
+    });
+    });
+  });
+
+
+
+
+
+
+
+
+
+
+app.post('/insertperiode/', function (req, res) {
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        var request = new sql.Request();
+        request.input('nama',sql.VarChar,req.body.nama )
+        //request.input('last_update',sql.VarChar,req.body.bobot )
+
+        request.query("Insert Into periode values " +
+         "(@nama,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)", function (err, recordset) {
+            if (err) console.log(err)
+            else 
+            {
+                console.log("berhasil post dengan id " + req.body.id)
+                res.send('berhasil mengirim data dasar');
+            }
+        });
+    });
+  });
+
+
+  app.get('/periode/', function (req, res) {
+    
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        var request = new sql.Request();
+        // query to the database and get the records
+        request.query('select id,nama as name,create_date as Date, last_update from periode', function (err, recordset) {
+            if (err) console.log(err)
+            else 
+            {
+                console.log("berhasil")
+                res.send(recordset.recordset);      
+            }
+        });
+    });
+});
+
+
+
+app.put('/editperiode/', function (req, res) {   
+    var request = new sql.Request();
+    request.input('id',sql.Numeric,req.body.id)
+    request.input('nama',sql.VarChar,req.body.nama )
+
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        request.query("UPDATE periode set " +
+        " [nama] = @nama, "  + 
+        " [last_update] = CURRENT_TIMESTAMP  "  +
+        " where periode.id= @id ", function (err, recordset) {
+            if (err) console.log(err)
+            console.log("berhasil diedit")
+            res.send('Berhasil ');
+        });
+    });
+  });
+
+  app.delete('/deleteperiode/:id', function (req, res) {
+    var request = new sql.Request();
+    const id = req.params.id;
+    sql.connect(config, function (err) {
+        
+    request.query(
+        "Delete From periode where periode.id = '"+ id+"'", function (err, recordset) {
+        if (err) console.log(err)
+        else
+        {
+            console.log("berhasil Delete dengan id " + id)
+            res.send('Berhasil');
+        }
+    });
+    });
+  });
+
+
+
+
+
+
+
+app.post('/insertindikatorperiode/', function (req, res) {
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        var request = new sql.Request();
+        request.input('id_master',sql.Int,req.body.id_master)
+        request.input('id_periode',sql.Numeric,req.body.id_periode )
+        request.input('bobot',sql.VarChar,req.body.bobot )
+
+        request.query("Insert Into indikator_periode values " +
+         "(@id_master,@id_periode,@bobot)", function (err, recordset) {
+            if (err) console.log(err)
+            else 
+            {
+                console.log("berhasil post dengan id " + req.body.id_master)
+                res.send('berhasil mengirim data dasar');
+            }
+        });
+    });
+  });
+   
+  app.get('/indikatorperiode/', function (req, res) {
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        var request = new sql.Request();
+        // query to the database and get the records
+        request.query('select id_master,id_periode,bobot as name from indikator_periode', function (err, recordset) {
+            if (err) console.log(err)
+            console.log("berhasil")
+            res.send(recordset.recordset);      
+        });
+    });
+});
+app.put('/editindikatorperiode/', function (req, res) {
+
+    var request = new sql.Request();
+    request.input('id_master',sql.Int,req.body.id_master)
+    request.input('id_periode',sql.Numeric,req.body.id_periode )
+    request.input('bobot',sql.VarChar,req.body.bobot )
+
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        request.query("UPDATE indikator_periode set " +
+        " [bobot] = @bobot  "  +
+        " where indikator_periode.id_periode = @id_periode AND indikator_periode.id_master = @id_master", function (err, recordset) {
+            if (err) console.log(err)
+            console.log("berhasil diedit")
+            res.send('Berhasil ');
+        });
+    });
+  });
+
+  app.delete('/deleteindikatorperiode/:id_master/:id_periode', function (req, res) {
+    var request = new sql.Request();
+    const id = req.params.id_master;
+    const id2 = req.params.id_periode;
+    console.log("Delete From indikator_periode where indikator_periode.id_master = '"+ id +"' AND " + 
+    "indikator_periode.id_periode = " + id2 + " ")
+    sql.connect(config, function (err) {
+        
+    request.query(
+        "Delete From indikator_periode where indikator_periode.id_master = '"+ id +"' AND " + 
+        "indikator_periode.id_periode = "+ id2
+    , function (err, recordset) {
+        if (err) console.log(err)
+        else
+        {
+            console.log("berhasil Delete dengan id " + id)
+            res.send('Berhasil');
+        }
+    });
+    });
+  });
+
+
+
+
+
+
+
+
+
+
+app.post('/insertmasterindikator/', function (req, res) {
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        var request = new sql.Request();
+        request.input('id_penyebut',sql.Int,req.body.id_penyebut)
+        request.input('id_pembilang',sql.Int,req.body.id_pembilang )
+        request.input('nama',sql.VarChar,req.body.nama )
+        request.input('deskripsi',sql.VarChar,req.body.deskripsi )
+        request.input('default_bobot',sql.Float,req.body.default_bobot )
+        request.input('expired_date',sql.DateTime,req.body.expired_date )
+
+        request.query("Insert Into MasterIndikator values " +
+         "(@id_penyebut,@id_pembilang,@nama,@deskripsi,@default_bobot, CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,@expired_date)", function (err, recordset) {
+            if (err) console.log(err)
+            else 
+            {
+                console.log("berhasil post dengan id " + req.body.id_penyebut)
+                res.send('berhasil mengirim data dasar');
+            }
+        });
+    });
+  });
+   
+  app.get('/masterindikator/', function (req, res) {
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        var request = new sql.Request();
+        // query to the database and get the records
+        request.query('select id,id_penyebut,id_pembilang, nama as name,deskripsi,default_bobot,expired_date from MasterIndikator', function (err, recordset) {
+            if (err) console.log(err)
+            console.log("berhasil")
+            res.send(recordset.recordset);      
+        });
+    });
+});
+app.put('/editmasterindikator/', function (req, res) {
+    
+    var request = new sql.Request();
+    request.input('id',sql.Int,req.body.id)
+    request.input('id_penyebut',sql.Int,req.body.id_penyebut)
+    request.input('id_pembilang',sql.Int,req.body.id_pembilang )
+    request.input('nama',sql.VarChar,req.body.nama )
+    request.input('deskripsi',sql.VarChar,req.body.deskripsi )
+    request.input('default_bobot',sql.Float,req.body.default_bobot )
+    //request.input('last_update',sql.DateTime,req.body.last_update  )
+    request.input('expired_date',sql.DateTime,req.body.expired_date )
+
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        request.query("UPDATE MasterIndikator set " +
+        " [id_penyebut] = @id_penyebut, "  + 
+        " [id_pembilang] = @id_pembilang, "  + 
+        " [nama] = @nama,  "  + 
+        " [deskripsi] = @deskripsi,  "  + 
+        " [default_bobot] = @default_bobot,  "  + 
+        " [last_update] = CURRENT_TIMESTAMP,  "  + 
+        " [expired_date] = @expired_date   "  + 
+        " where MasterIndikator.id = @id", function (err, recordset) {
+            if (err) console.log(err)
+            console.log("berhasil diedit")
+            res.send('Berhasil ');
+        });
+    });
+  });
+
+  app.delete('/deletemasterindikator/:idDelete', function (req, res) {
+    var request = new sql.Request();
+    const id = req.params.idDelete;
+    sql.connect(config, function (err) {
+        
+    request.query("Delete From MasterIndikator where MasterIndikator.id = '"+ id +"'", function (err, recordset) {
+        if (err) console.log(err)
+        console.log("berhasil Delete dengan id " + id)
+        res.send('Berhasil');
+    });
+    });
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   app.post('/insertkategoriunit/', function (req, res) {
     sql.connect(config, function (err) {
@@ -99,110 +802,21 @@ app.put('/editkategoriunit/', function (req, res) {
   app.delete('/deletekategoriunit/:idDelete', function (req, res) {
     var request = new sql.Request();
     const id = req.params.idDelete;
+    sql.connect(config, function (err) {
+        
     request.query("Delete From Kategori_Unit where Kategori_Unit.id = '"+ id +"'", function (err, recordset) {
         if (err) console.log(err)
         console.log("berhasil Delete dengan id " + id)
         res.send('Berhasil');
     });
-  });
-
-
-  app.post('/insertunit/', function (req, res) {
-    sql.connect(config, function (err) {
-        if (err) console.log(err);
-        var request = new sql.Request();
-        // query to the database and get the records
-        request.query("Insert Into List_Unit values ('"+req.body.NAMA+ "','"+req.body.kategoriUnit+"')",
-        function (err, recordset) {
-            if (err) console.log(err)
-            else console.log("berhasil post dengan id " + req.body.NAMA)
-            res.send('berhasil mengirim data dasar');
-        });
-    });
-  });
-  app.get('/unit/', function (req, res) {
-    sql.connect(config, function (err) {
-        if (err) console.log(err);
-        var request = new sql.Request();
-        // query to the database and get the records
-        request.query('select id,NAMA as name,Kategori_Unit_id from List_Unit', function (err, recordset) {
-            if (err) console.log(err)
-            console.log("berhasil")
-            res.send(recordset.recordset);      
-        });
-    });
-});
-app.put('/editunit/', function (req, res) {
-    sql.connect(config, function (err) {
-        if (err) console.log(err);
-        var request = new sql.Request();
-        request.query("UPDATE List_Unit set [NAMA] = '"+req.body.NAMA+"', [Kategori_Unit_id] = '"+req.body.Kategori+"' where List_Unit.id ="+ req.body.id , function (err, recordset) {
-            if (err) console.log(err)
-            console.log("berhasil diedit data unit + " + req.body.Kategori)
-            res.send('Berhasil ');
-        });
-    });
-  });
-  app.delete('/deleteunit/:idDelete', function (req, res) {
-    var request = new sql.Request();
-    const id = req.params.idDelete;
-    request.query("Delete From List_Unit where List_Unit.id = '"+ id +"'", function (err, recordset) {
-        if (err) console.log(err)
-        console.log("berhasil Delete dengan id " + id)
-        res.send('Berhasil');
-    });
-  });
-  app.post('/insertcapaianunit/', function (req, res) {
-    sql.connect(config, function (err) {
-        if (err) console.log(err);
-        var request = new sql.Request();
-        // query to the database and get the records
-        request.query("Insert Into Capaian_Unit values ('"+req.body.Unit+"','"+req.body.Data_Dasar+"','"+req.body.Waktu+"','"+req.body.Capaian+"')",
-        function (err, recordset) {
-            if (err) console.log(err)
-            else console.log("berhasil post dengan time" + req.body.Waktu)
-            res.send('berhasil mengirim data dasar');
-        });
-    });
-  });
-  app.get('/capaianunit/', function (req, res) {
-    sql.connect(config, function (err) {
-        if (err) console.log(err);
-        var request = new sql.Request();
-        // query to the database and get the records
-        request.query('select Unit_Id, DataDasar_id , Waktu ,Capaian from Capaian_Unit', function (err, recordset) {
-            if (err) console.log(err)
-            console.log("berhasil")
-            res.send(recordset.recordset);      
-        });
-    });
-});
-app.put('/editcapaianunit/', function (req, res) {
-    sql.connect(config, function (err) {
-        if (err) console.log(err);
-        var request = new sql.Request();
-        request.query("UPDATE Capaian_Unit set [Unit_Id] = '"+req.body.Unit+"', [DataDasar_id] = '"+req.body.Data_Dasar+"', [Capaian] = '"+ req.body.Capaian +"' where Capaian_Unit.Waktu ='"+ req.body.Waktu+"'", function (err, recordset) {
-            if (err) console.log(err)
-            else 
-            {
-                console.log("berhasil diedit data unit + " + req.body.Waktu)
-                res.send('Berhasil ');
-            }
-            
-        });
-    });
-  });
-  app.delete('/deletecapaianunit/:idDelete', function (req, res) {
-    var request = new sql.Request();
-    const id = req.params.idDelete;
-    console.log(id)
-    request.query("Delete From Capaian_Unit where Capaian_Unit.waktu = '"+ id +"'", function (err, recordset) {
-        if (err) console.log(err)
-        console.log("berhasil Delete dengan id " + id)
-        res.send('Berhasil');
     });
   });
 
+
+  
+
+
+  
 
 
 
@@ -243,10 +857,13 @@ app.post('/insertdata/', function (req, res) {
     console.log(
         'diterima request delete ' + req.params.idDelete
     )
+    sql.connect(config, function (err) {
+        
     request.query("Delete From ListSiswa where ListSiswa.id = '"+ id +"'", function (err, recordset) {
         if (err) console.log(err)
         console.log("berhasil Delete dengan id " + id)
         res.send('Berhasil');
+    });
     });
   });
 
