@@ -15,6 +15,177 @@ var config = {
     database: 'nrp05111740000078'
 };
 
+app.get('/abmas/', function (req, res) {
+    
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        var request = new sql.Request();
+        // query to the database and get the records
+        request.query('select * from abmas', function (err, recordset) {
+            if (err) console.log(err)
+            else 
+            {
+                console.log("berhasil")
+                res.send(recordset.recordset);      
+            }
+        });
+    });
+});
+
+app.get('/publikasi/', function (req, res) {
+    
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        var request = new sql.Request();
+        // query to the database and get the records
+        request.query('select * from publikasi', function (err, recordset) {
+            if (err) console.log(err)
+            else 
+            {
+                console.log("berhasil")
+                res.send(recordset.recordset);      
+            }
+        });
+    });
+});
+
+
+app.get('/dosen/', function (req, res) {
+    
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        var request = new sql.Request();
+        // query to the database and get the records
+        request.query('select * from dosen', function (err, recordset) {
+            if (err) console.log(err)
+            else 
+            {
+                console.log("berhasil")
+                res.send(recordset.recordset);      
+            }
+        });
+    });
+});
+
+app.get('/abmas/', function (req, res) {
+    
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        var request = new sql.Request();
+        // query to the database and get the records
+        request.query('select * from abmas', function (err, recordset) {
+            if (err) console.log(err)
+            else 
+            {
+                console.log("berhasil")
+                res.send(recordset.recordset);      
+            }
+        });
+    });
+});
+
+
+app.get('/penelitian/', function (req, res) {
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        var request = new sql.Request();
+        // query to the database and get the records
+        request.query('select * from penelitian', function (err, recordset) {
+            if (err) console.log(err)
+            else 
+            {
+                console.log("berhasil")
+                res.send(recordset.recordset);      
+            }
+        });
+    });
+});
+
+app.post('/insertaspek/', function (req, res) {
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        var request = new sql.Request();
+        request.input('id',sql.UniqueIdentifier,req.body.id )
+        request.input('aspek',sql.VarChar,req.body.aspek)
+        request.input('komponen_aspek',sql.VarChar,req.body.komponen_aspek)
+        //request.input('last_update',sql.VarChar,req.body.bobot )
+
+        request.query("Insert Into aspek values " +
+         "(@aspek,@komponen_aspek)", function (err, recordset) {
+            if (err) console.log(err)
+            else 
+            {
+                console.log("berhasil post dengan id ")
+                res.send('berhasil mengirim data dasar');
+            }
+        });
+    });
+  });
+
+
+  app.get('/aspek/', function (req, res) {
+    
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        var request = new sql.Request();
+        // query to the database and get the records
+        request.query('select id,aspek as name,komponen_aspek from aspek', function (err, recordset) {
+            if (err) console.log(err)
+            else 
+            {
+                console.log("berhasil")
+                res.send(recordset.recordset);      
+            }
+        });
+    });
+});
+
+
+
+app.put('/editaspek/', function (req, res) {   
+    var request = new sql.Request();
+    
+    request.input('id',sql.Int,req.body.id )
+    request.input('aspek',sql.VarChar,req.body.aspek)
+    request.input('komponen_aspek',sql.VarChar,req.body.komponen_aspek)
+
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        request.query("UPDATE aspek set " +
+        " [komponen_aspek] = @komponen_aspek, "  + 
+        " [aspek] = @aspek "  + 
+        " where aspek.id = @id"
+        , function (err, recordset) {
+            if (err) console.log(err)
+            else
+            {
+                console.log("berhasil diedit")
+                res.send('Berhasil ');
+            }
+        });
+    });
+  });
+
+  app.delete('/deleteaspek/:id/', function (req, res) {
+    var request = new sql.Request();
+    const id = req.params.id;
+    var querys = "Delete From aspek where " +
+    "aspek.id = '"+ id+"'"
+    console.log(querys);
+    sql.connect(config, function (err) {
+        request.query( querys, function (err, recordset) {
+        if (err) console.log(err)
+        else
+        {
+            console.log("berhasil Delete dengan id ")
+            res.send('Berhasil');
+        }});
+    });
+    
+  });
+
+
+
 app.post('/insertsatuankerja/', function (req, res) {
     sql.connect(config, function (err) {
         if (err) console.log(err);
@@ -46,7 +217,7 @@ app.post('/insertsatuankerja/', function (req, res) {
         if (err) console.log(err);
         var request = new sql.Request();
         // query to the database and get the records
-        request.query('select id,id_jns_satker,id_induk_satker, nama as name,email,create_date ,last_update ,expired_date from satuankerja', function (err, recordset) {
+        request.query('select id,id_jns_satker,id_induk_satker, nama as name,email,create_date ,last_update ,expired_date from satuankerja order by create_date', function (err, recordset) {
             if (err) console.log(err)
             else 
             {
@@ -412,7 +583,7 @@ app.post('/insertindikator_satuankerja/', function (req, res) {
     sql.connect(config, function (err) {
         if (err) console.log(err);
         var request = new sql.Request();
-        request.input('id_periode',sql.Numeric,req.body.id_periode )
+        request.input('id_periode',sql.Numeric,req.body.id_periode )        
         request.input('id_master',sql.Int,req.body.id_master )
         request.input('id_satker',sql.UniqueIdentifier,req.body.id_satker )
         request.input('bobot',sql.Float,req.body.bobot)
@@ -677,15 +848,17 @@ app.post('/insertmasterindikator/', function (req, res) {
     sql.connect(config, function (err) {
         if (err) console.log(err);
         var request = new sql.Request();
+        request.input('id_aspek',sql.Int,req.body.id_aspek )
         request.input('id_penyebut',sql.Int,req.body.id_penyebut)
         request.input('id_pembilang',sql.Int,req.body.id_pembilang )
+        
         request.input('nama',sql.VarChar,req.body.nama )
         request.input('deskripsi',sql.VarChar,req.body.deskripsi )
         request.input('default_bobot',sql.Float,req.body.default_bobot )
         request.input('expired_date',sql.DateTime,req.body.expired_date )
 
         request.query("Insert Into MasterIndikator values " +
-         "(@id_penyebut,@id_pembilang,@nama,@deskripsi,@default_bobot, CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,@expired_date)", function (err, recordset) {
+         "(@id_aspek,@id_penyebut,@id_pembilang,@nama,@deskripsi,@default_bobot, CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,@expired_date)", function (err, recordset) {
             if (err) console.log(err)
             else 
             {
@@ -701,7 +874,7 @@ app.post('/insertmasterindikator/', function (req, res) {
         if (err) console.log(err);
         var request = new sql.Request();
         // query to the database and get the records
-        request.query('select id,id_penyebut,id_pembilang, nama as name,deskripsi,default_bobot,expired_date from MasterIndikator', function (err, recordset) {
+        request.query('select id,id_aspek,id_penyebut,id_pembilang, nama as name,deskripsi,default_bobot,expired_date from MasterIndikator', function (err, recordset) {
             if (err) console.log(err)
             console.log("berhasil")
             res.send(recordset.recordset);      
@@ -712,6 +885,7 @@ app.put('/editmasterindikator/', function (req, res) {
     
     var request = new sql.Request();
     request.input('id',sql.Int,req.body.id)
+    request.input('id_aspek',sql.Int,req.body.id_aspek )
     request.input('id_penyebut',sql.Int,req.body.id_penyebut)
     request.input('id_pembilang',sql.Int,req.body.id_pembilang )
     request.input('nama',sql.VarChar,req.body.nama )
@@ -725,6 +899,7 @@ app.put('/editmasterindikator/', function (req, res) {
         request.query("UPDATE MasterIndikator set " +
         " [id_penyebut] = @id_penyebut, "  + 
         " [id_pembilang] = @id_pembilang, "  + 
+        " [id_aspek] = @id_aspek, "  + 
         " [nama] = @nama,  "  + 
         " [deskripsi] = @deskripsi,  "  + 
         " [default_bobot] = @default_bobot,  "  + 
