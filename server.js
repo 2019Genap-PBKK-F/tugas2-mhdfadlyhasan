@@ -15,8 +15,61 @@ var config = {
     database: 'nrp05111740000078'
 };
 
+
+app.post('/konkerdanname/', function (req, res) {
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        var request = new sql.Request();
+        console.log(req.body.name)
+        request.input('name',sql.VarChar,req.body.name)
+        // query to the database and get the records
+        var query = 'select id from SatuanKerja where nama = \'' + req.body.name + '\''
+        request.query(query, function (err, recordset) {
+            if (err) console.log(err)
+            else 
+            {
+                console.log("berhasil")
+                res.send(recordset.recordset);      
+            }
+        });
+    });
+});
+
+app.get('/login/', function (req, res) {
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        var request = new sql.Request();
+        request.input('email',sql.VarChar,req.query.email_user )
+        // query to the database and get the records
+        request.query('select id, nama from SatuanKerja where SatuanKerja.email = @email', function (err, recordset) {
+            if (err) console.log(err)
+            else 
+            {
+                res.send(recordset.recordset);      
+            }
+        });
+    });
+});
+
+app.get('/konker/', function (req, res) {
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        var request = new sql.Request();
+        console.log(req.query.id_satker)
+        request.input('id_satker',sql.UniqueIdentifier,req.query.id_satker )
+        // query to the database and get the records
+        request.query('select Nama,[Nama Master], Bobot, Target, Capaian, ID_Periode, Last_Update from KontrakKerja where KontrakKerja.id_satker = @id_satker', function (err, recordset) {
+            if (err) console.log(err)
+            else 
+            {
+                res.send(recordset.recordset);      
+            }
+        });
+    });
+});
+
+
 app.get('/abmas/', function (req, res) {
-    
     sql.connect(config, function (err) {
         if (err) console.log(err);
         var request = new sql.Request();
@@ -31,6 +84,25 @@ app.get('/abmas/', function (req, res) {
         });
     });
 });
+
+
+app.get('/testing/', function (req, res) {
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        var request = new sql.Request();
+        console.log(req.body.pesan)
+        // query to the database and get the records
+        request.query('select * from penelitian', function (err, recordset) {
+            if (err) console.log(err)
+            else 
+            {
+                console.log("berhasil")
+                res.send(recordset.recordset);      
+            }
+        });
+    });
+});
+
 
 app.get('/publikasi/', function (req, res) {
     
