@@ -58,7 +58,7 @@ app.get('/konker/', function (req, res) {
         console.log(req.query.id_satker)
         request.input('id_satker',sql.UniqueIdentifier,req.query.id_satker )
         // query to the database and get the records
-        request.query('select aspek,komponen_aspek,Nama,[Nama Master] as [Indikator Kinerja], Bobot, Target, Capaian, ID_Periode, Last_Update from KontrakKerja where KontrakKerja.id_satker = @id_satker', function (err, recordset) {
+        request.query('select aspek,komponen_aspek,Nama,[Nama Master] as [Indikator Kinerja], Bobot, Target, Capaian from KontrakKerja where KontrakKerja.id_satker = @id_satker', function (err, recordset) {
             if (err) console.log(err)
             else 
             {
