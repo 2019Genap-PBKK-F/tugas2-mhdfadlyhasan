@@ -41,7 +41,7 @@ app.get('/login/', function (req, res) {
         var request = new sql.Request();
         request.input('email',sql.VarChar,req.query.email_user )
         // query to the database and get the records
-        request.query('select id, nama, from SatuanKerja where SatuanKerja.email = @email', function (err, recordset) {
+        request.query('select id, nama from SatuanKerja where SatuanKerja.email = @email', function (err, recordset) {
             if (err) console.log(err)
             else 
             {
