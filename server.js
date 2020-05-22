@@ -16,6 +16,26 @@ var config = {
 };
 
 
+app.get('/satuankerjakhusus/', function (req, res) {
+    
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        var request = new sql.Request();
+        request.input('id_satker',sql.UniqueIdentifier,req.query.id_satker )
+        // query to the database and get the records
+        request.query('select id,nama as name from satuankerja '+
+        'where satuankerja.id = @id_satker OR satuankerja.id_induk_satker=@id_satker', function (err, recordset) {
+            if (err) console.log(err)
+            else 
+            {
+                console.log("berhasil")
+                res.send(recordset.recordset);      
+            }
+        });
+    });
+});
+
+
 app.post('/konkerdanname/', function (req, res) {
     sql.connect(config, function (err) {
         if (err) console.log(err);
@@ -58,7 +78,7 @@ app.get('/konker/', function (req, res) {
         console.log(req.query.id_satker)
         request.input('id_satker',sql.UniqueIdentifier,req.query.id_satker )
         // query to the database and get the records
-        request.query('select aspek,komponen_aspek,Nama,[Nama Master] as [Indikator Kinerja], Bobot, Target, Capaian from KontrakKerja where KontrakKerja.id_satker = @id_satker', function (err, recordset) {
+        request.query('select aspek,komponen_aspek,[Nama Master] as [Indikator Kinerja], Bobot, Target, Capaian, Cast((Target * 100/Capaian) as varchar(10)) +  \' %\' as [persentase capaian target] from KontrakKerja where KontrakKerja.id_satker = @id_satker OR KontrakKerja.id_induk_satker=@id_satker', function (err, recordset) {
             if (err) console.log(err)
             else 
             {
@@ -682,7 +702,7 @@ app.post('/insertindikator_satuankerja/', function (req, res) {
         if (err) console.log(err);
         var request = new sql.Request();
         // query to the database and get the records
-        request.query('select id_periode,id_master,id_satker,bobot,target,capaian,last_update from indikator_satuankerja', function (err, recordset) {
+        request.query('select id_periode,id_master,id_satker,bobot,target,capaian,last_update from indikator_satuankerja order by last_update DESC', function (err, recordset) {
             if (err) console.log(err)
             else 
             {
