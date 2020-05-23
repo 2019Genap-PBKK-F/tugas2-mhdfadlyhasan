@@ -78,7 +78,7 @@ app.get('/konker/', function (req, res) {
         console.log(req.query.id_satker)
         request.input('id_satker',sql.UniqueIdentifier,req.query.id_satker )
         // query to the database and get the records
-        request.query('select aspek,komponen_aspek,[Nama Master] as [Indikator Kinerja], Bobot, Target, Capaian, Cast((Target * 100/Capaian) as varchar(10)) +  \' %\' as [persentase capaian target] from KontrakKerja where KontrakKerja.id_satker = @id_satker OR KontrakKerja.id_induk_satker=@id_satker', function (err, recordset) {
+        request.query('select aspek,komponen_aspek,[Nama Master] as [Indikator Kinerja], Bobot, Target, Capaian, Cast((Target * 100/Capaian) as varchar(10)) +  \' %\' as [persentase capaian target] from KontrakKerja where KontrakKerja.id_satker = @id_satker ', function (err, recordset) {
             if (err) console.log(err)
             else 
             {
