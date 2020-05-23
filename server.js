@@ -5,7 +5,7 @@ var bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors())
 app.use(bodyParser.json());
-
+const https = require('https');
 var sql = require("mssql");
     // config for your database
 var config = {
@@ -1169,7 +1169,25 @@ app.post('/insertdata/', function (req, res) {
         });
     });
   });
-var server = app.listen(8014, function () {
-});
+// var server = app.listen(8014, function () {
+// });
 // server.listen(8014, '10.199.14.46', () => {
 // });
+
+const fs = require('fs');
+
+const options = {
+    key: fs.readFileSync('key.pem'),
+    cert: fs.readFileSync('cert.pem')
+  };
+
+
+  app.get('/', function (req, res) {
+    res.send('hello world')
+  })
+  
+  
+https.createServer(options,app).listen(8014, function()
+  {
+    console.log('Example app listening on port, https://localhost:8014/');
+  });
