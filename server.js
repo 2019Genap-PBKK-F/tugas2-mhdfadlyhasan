@@ -1177,15 +1177,9 @@ app.post('/insertdata/', function (req, res) {
 const fs = require('fs');
 
 const options = {
-    key: fs.readFileSync('key.pem'),
-    cert: fs.readFileSync('cert.pem')
+    key: fs.readFileSync(__dirname+'key.pem'),
+    cert: fs.readFileSync(__dirname+'cert.pem')
   };
-
-
-  app.get('/', function (req, res) {
-    res.send('hello world')
-  })
-  
   
 https.createServer(options,app).listen(8014, function()
   {
